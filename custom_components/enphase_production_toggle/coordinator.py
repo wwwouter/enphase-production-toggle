@@ -1,4 +1,5 @@
 """DataUpdateCoordinator for Enphase Production Toggle."""
+
 from __future__ import annotations
 
 from datetime import timedelta
@@ -26,9 +27,7 @@ class EnphaseDataUpdateCoordinator(DataUpdateCoordinator):
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         """Initialize the coordinator."""
         self.client = EnvoyClient(
-            entry.data[CONF_HOST],
-            entry.data[CONF_USERNAME],
-            entry.data[CONF_PASSWORD]
+            entry.data[CONF_HOST], entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD]
         )
 
         super().__init__(

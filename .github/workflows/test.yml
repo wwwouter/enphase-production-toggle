@@ -25,16 +25,19 @@ jobs:
       run: uv python install ${{ matrix.python-version }}
 
     - name: Install dependencies
-      run: uv sync --group test
+      run: uv sync --group test --group dev
 
     - name: Lint with ruff
       run: uv run ruff check custom_components/
 
+    - name: Format check with black
+      run: uv run black --check custom_components/ tests/
+
     - name: Format check with ruff
       run: uv run ruff format --check custom_components/
 
+    - name: Type check with basedpyright
+      run: uv run basedpyright
+
     - name: Test with pytest
       run: uv run pytest tests/test_integration_simple.py tests/test_envoy_client.py -v
-
-    - name: Type check with mypy
-      run: uv run mypy custom_components/ || true  # Allow mypy to fail for now

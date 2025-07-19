@@ -1,4 +1,5 @@
 """Switch platform for Enphase Production Toggle."""
+
 from __future__ import annotations
 
 import logging
@@ -77,7 +78,7 @@ class EnphaseProductionSwitch(CoordinatorEntity, SwitchEntity):
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
         try:
-            await self.coordinator.client.set_production_power(True)
+            await self.coordinator.client.set_production_power(True)  # type: ignore[attr-defined]
             await self.coordinator.async_request_refresh()
         except Exception as err:
             _LOGGER.error("Failed to turn on production: %s", err)
@@ -86,7 +87,7 @@ class EnphaseProductionSwitch(CoordinatorEntity, SwitchEntity):
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
         try:
-            await self.coordinator.client.set_production_power(False)
+            await self.coordinator.client.set_production_power(False)  # type: ignore[attr-defined]
             await self.coordinator.async_request_refresh()
         except Exception as err:
             _LOGGER.error("Failed to turn off production: %s", err)

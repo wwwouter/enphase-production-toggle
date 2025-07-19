@@ -64,14 +64,17 @@ uv run pytest tests/test_switch.py
 ### Code Quality
 
 ```bash
-# Format code
-uv run ruff format
+# Format code with black
+uv run black custom_components/ tests/
+
+# Format code with ruff
+uv run ruff format custom_components/
 
 # Lint code
-uv run ruff check
+uv run ruff check custom_components/
 
 # Type checking
-uv run mypy custom_components/
+uv run basedpyright
 ```
 
 ## API Reference

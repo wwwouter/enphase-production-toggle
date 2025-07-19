@@ -1,4 +1,5 @@
 """Config flow for Enphase Production Toggle integration."""
+
 from __future__ import annotations
 
 import logging
@@ -55,9 +56,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
             else:
-                return self.async_create_entry(title=info["title"], data=user_input)
+                return self.async_create_entry(title=info["title"], data=user_input)  # type: ignore[return-value]
 
-        return self.async_show_form(
+        return self.async_show_form(  # type: ignore[return-value]
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
         )
 

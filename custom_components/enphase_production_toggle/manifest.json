@@ -1,7 +1,7 @@
 {
   "domain": "enphase_production_toggle",
   "name": "Enphase Production Toggle",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "documentation": "https://github.com/your-username/enphase-production-toggle",
   "issue_tracker": "https://github.com/your-username/enphase-production-toggle/issues",
   "dependencies": [],

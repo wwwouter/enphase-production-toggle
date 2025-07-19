@@ -1,4 +1,5 @@
 """Enphase Envoy client for production control."""
+
 from __future__ import annotations
 
 import hashlib
@@ -53,10 +54,11 @@ class EnvoyClient:
         if self.session_id:
             await self._get_jwt_token(code_verifier, code_challenge)
 
-    def _extract_session_id(self, response_text: str) -> str:
+    def _extract_session_id(self, response_text: str) -> str | None:
         """Extract session ID from authentication response."""
         # Simplified extraction - in real implementation, parse JSON/HTML properly
         import re
+
         match = re.search(r'"session_id":"([^"]+)"', response_text)
         if match:
             return match.group(1)
@@ -71,6 +73,8 @@ class EnvoyClient:
             "Content-Type": "application/json",
         }
 
+        if self._session is None:
+            return
         async with self._session.get(token_url, headers=headers) as response:
             if response.status == 200:
                 data = await response.json()
@@ -84,6 +88,8 @@ class EnvoyClient:
         url = f"http://{self.host}/production.json"
         headers = {"Authorization": f"Bearer {self.jwt_token}"}
 
+        if self._session is None:
+            raise Exception("Session not initialized")
         async with self._session.get(url, headers=headers) as response:
             if response.status == 200:
                 data = await response.json()
@@ -112,9 +118,11 @@ class EnvoyClient:
         # Data format based on the HACS integration analysis
         data = {
             "length": 1,
-            "arr": [not enabled]  # False = production on, True = production off
+            "arr": [not enabled],  # False = production on, True = production off
         }
 
+        if self._session is None:
+            raise Exception("Session not initialized")
         async with self._session.put(url, headers=headers, json=data) as response:
             if response.status not in [200, 201, 204]:
                 raise Exception(f"Failed to set production power: {response.status}")

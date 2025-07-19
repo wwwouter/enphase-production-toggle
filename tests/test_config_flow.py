@@ -1,4 +1,5 @@
 """Test the Enphase Production Toggle config flow."""
+
 import pytest
 from unittest.mock import AsyncMock, patch
 
@@ -94,18 +95,21 @@ async def test_form_unexpected_exception(hass: HomeAssistant) -> None:
 async def test_validate_input_success(hass: HomeAssistant, mock_envoy_client) -> None:
     """Test input validation with successful connection."""
     from custom_components.enphase_production_toggle.config_flow import validate_input
-    
+
     with patch(
         "custom_components.enphase_production_toggle.config_flow.EnvoyClient"
     ) as mock_client_class:
         mock_client_class.return_value = mock_envoy_client
-        
-        result = await validate_input(hass, {
-            CONF_HOST: "192.168.1.100",
-            CONF_USERNAME: "test@example.com",
-            CONF_PASSWORD: "testpassword",
-        })
-        
+
+        result = await validate_input(
+            hass,
+            {
+                CONF_HOST: "192.168.1.100",
+                CONF_USERNAME: "test@example.com",
+                CONF_PASSWORD: "testpassword",
+            },
+        )
+
         assert result == {"title": "Enphase Envoy (192.168.1.100)"}
         mock_envoy_client.authenticate.assert_called_once()
 
@@ -113,16 +117,19 @@ async def test_validate_input_success(hass: HomeAssistant, mock_envoy_client) ->
 async def test_validate_input_cannot_connect(hass: HomeAssistant) -> None:
     """Test input validation with connection failure."""
     from custom_components.enphase_production_toggle.config_flow import validate_input
-    
+
     with patch(
         "custom_components.enphase_production_toggle.config_flow.EnvoyClient"
     ) as mock_client_class:
         mock_client = mock_client_class.return_value
         mock_client.authenticate.side_effect = Exception("Connection failed")
-        
+
         with pytest.raises(CannotConnect):
-            await validate_input(hass, {
-                CONF_HOST: "192.168.1.100",
-                CONF_USERNAME: "test@example.com",
-                CONF_PASSWORD: "testpassword",
-            })
+            await validate_input(
+                hass,
+                {
+                    CONF_HOST: "192.168.1.100",
+                    CONF_USERNAME: "test@example.com",
+                    CONF_PASSWORD: "testpassword",
+                },
+            )
