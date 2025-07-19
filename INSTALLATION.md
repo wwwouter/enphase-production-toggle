@@ -2,8 +2,8 @@
 
 ## Requirements
 
-- Home Assistant 2024.1.0 or later
-- Python 3.11 or later
+- Home Assistant 2025.1.0 or later
+- Python 3.13.1 or later
 - Access to your local Enphase Envoy device
 - Valid Enphase account credentials
 

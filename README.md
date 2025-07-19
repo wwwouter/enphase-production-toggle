@@ -33,7 +33,7 @@ Once configured, you'll have a switch entity named "Enphase Production" that you
 
 ## Development
 
-This project uses `uv` for dependency management and `pytest` for testing.
+This project uses `uv` for dependency management and `pytest` for testing. Requires Python 3.13.1 or later.
 
 ### Setup Development Environment
 
