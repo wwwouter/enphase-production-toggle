@@ -1,0 +1,19 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Enphase Production Toggle",
+        "description": "Configure your Enphase Envoy connection",
+        "data": {
+          "host": "Envoy IP Address",
+          "username": "Enphase Account Username",
+          "password": "Enphase Account Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to Enphase Envoy",
+      "unknown": "Unexpected error occurred"
+    }
+  }
+}

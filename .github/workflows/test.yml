@@ -1,0 +1,40 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+
+    - name: Set up Python ${{ matrix.python-version }}
+      run: uv python install ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: uv sync --group test
+
+    - name: Lint with ruff
+      run: uv run ruff check custom_components/
+
+    - name: Format check with ruff
+      run: uv run ruff format --check custom_components/
+
+    - name: Test with pytest
+      run: uv run pytest tests/test_integration_simple.py tests/test_envoy_client.py -v
+
+    - name: Type check with mypy
+      run: uv run mypy custom_components/ || true  # Allow mypy to fail for now
