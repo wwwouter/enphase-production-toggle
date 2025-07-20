@@ -95,13 +95,36 @@ The integration communicates with the Enphase Envoy using local API endpoints:
 
 ### Debugging
 
-Enable debug logging by adding this to your `configuration.yaml`:
+The integration includes comprehensive logging at debug and info levels to help troubleshoot issues. Enable debug logging by adding this to your `configuration.yaml`:
 
 ```yaml
 logger:
   logs:
     custom_components.enphase_production_toggle: debug
 ```
+
+#### What Gets Logged
+
+- **INFO level**: Important operations (authentication success, production changes, setup/teardown)
+- **DEBUG level**: Detailed flow information (API requests/responses, data parsing, state changes)
+- **ERROR level**: Authentication failures, API errors, connection issues
+
+#### Example Log Output
+
+```
+INFO: Setting up Enphase Production Toggle integration for Enphase Envoy (192.168.1.100)
+DEBUG: Entry data: host=192.168.1.100, username=user@example.com
+DEBUG: Initializing coordinator for host: 192.168.1.100
+INFO: Coordinator initialized with 30 second update interval
+DEBUG: Starting authentication process
+INFO: Successfully authenticated with Enphase Envoy at 192.168.1.100
+INFO: Data update successful - Production: 4500 W, Enabled: True
+INFO: User requested to turn OFF production
+INFO: Setting production power to: disabled
+INFO: Successfully set production power to disabled
+```
+
+This detailed logging helps identify exactly where issues occur in the authentication or control process.
 
 ## License
 

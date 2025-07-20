@@ -74,6 +74,7 @@ async def test_get_production_status_failure():
         mock_session = mock_session_class.return_value
         mock_response = MagicMock()
         mock_response.status = 404
+        mock_response.text = AsyncMock(return_value="Error response")
         mock_response.__aenter__ = AsyncMock(return_value=mock_response)
         mock_response.__aexit__ = AsyncMock(return_value=None)
         mock_session.get.return_value = mock_response
@@ -127,6 +128,7 @@ async def test_set_production_power_failure():
         mock_session = mock_session_class.return_value
         mock_response = MagicMock()
         mock_response.status = 500
+        mock_response.text = AsyncMock(return_value="Error response")
         mock_response.__aenter__ = AsyncMock(return_value=mock_response)
         mock_response.__aexit__ = AsyncMock(return_value=None)
         mock_session.put.return_value = mock_response

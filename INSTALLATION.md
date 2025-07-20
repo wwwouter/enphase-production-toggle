@@ -109,7 +109,7 @@ automation:
 
 ### Debug Logging
 
-To enable debug logging, add this to your `configuration.yaml`:
+The integration includes comprehensive logging to help with troubleshooting. To enable debug logging, add this to your `configuration.yaml`:
 
 ```yaml
 logger:
@@ -117,7 +117,13 @@ logger:
     custom_components.enphase_production_toggle: debug
 ```
 
-Then restart Home Assistant and check the logs for detailed error information.
+#### Logging Levels
+
+- **INFO**: Key operations (setup, authentication success, production changes)
+- **DEBUG**: Detailed flow (API calls, data parsing, state updates)  
+- **ERROR**: Failures (authentication errors, API failures, connection issues)
+
+Then restart Home Assistant and check the logs for detailed error information. The logs will show exactly where in the process any issues occur, making troubleshooting much easier.
 
 ### Getting Help
 
