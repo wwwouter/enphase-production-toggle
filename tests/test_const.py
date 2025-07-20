@@ -24,7 +24,7 @@ def test_configuration_keys():
     assert CONF_HOST == "host"
     assert CONF_USERNAME == "username"
     assert CONF_PASSWORD == "password"
-    
+
     # Ensure they're all strings
     assert isinstance(CONF_HOST, str)
     assert isinstance(CONF_USERNAME, str)
@@ -36,7 +36,7 @@ def test_default_values():
     assert DEFAULT_NAME == "Enphase Production"
     assert isinstance(DEFAULT_NAME, str)
     assert len(DEFAULT_NAME) > 0
-    
+
     assert DEFAULT_SCAN_INTERVAL == 30
     assert isinstance(DEFAULT_SCAN_INTERVAL, int)
     assert DEFAULT_SCAN_INTERVAL > 0
@@ -54,10 +54,10 @@ def test_constants_immutable():
     original_domain = DOMAIN
     original_default_name = DEFAULT_NAME
     original_scan_interval = DEFAULT_SCAN_INTERVAL
-    
+
     # Try to modify (should not affect the constants)
     domain_copy = DOMAIN + "_modified"
-    
+
     # Verify originals are unchanged
     assert DOMAIN == original_domain
     assert DEFAULT_NAME == original_default_name

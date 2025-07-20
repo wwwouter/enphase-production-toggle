@@ -43,7 +43,9 @@ class TestEnphaseDataUpdateCoordinatorUnit:
 
             # Verify coordinator properties
             assert coordinator.name == DOMAIN
-            assert coordinator.update_interval == timedelta(seconds=DEFAULT_SCAN_INTERVAL)
+            assert coordinator.update_interval == timedelta(
+                seconds=DEFAULT_SCAN_INTERVAL
+            )
 
     def test_coordinator_with_different_hosts(self):
         """Test coordinator initialization with different host formats."""
@@ -137,7 +139,9 @@ class TestEnphaseDataUpdateCoordinatorUnit:
             ) as mock_client_class:
                 mock_client = mock_client_class.return_value
                 mock_client.authenticate = AsyncMock()
-                mock_client.get_production_status = AsyncMock(return_value=response_data)
+                mock_client.get_production_status = AsyncMock(
+                    return_value=response_data
+                )
 
                 coordinator = EnphaseDataUpdateCoordinator(mock_hass, mock_entry)
                 result = await coordinator._async_update_data()
@@ -241,7 +245,7 @@ class TestEnphaseDataUpdateCoordinatorUnit:
             # Verify call sequence
             assert mock_client.authenticate.called
             assert mock_client.get_production_status.called
-            
+
             # Verify authenticate was called before get_production_status
             handle = mock_client.method_calls
             auth_call_index = next(
@@ -290,7 +294,9 @@ class TestEnphaseDataUpdateCoordinatorUnit:
             coordinator = EnphaseDataUpdateCoordinator(mock_hass, mock_entry)
 
             # Verify default interval
-            assert coordinator.update_interval == timedelta(seconds=DEFAULT_SCAN_INTERVAL)
+            assert coordinator.update_interval == timedelta(
+                seconds=DEFAULT_SCAN_INTERVAL
+            )
 
             # Test that interval is reasonable
             total_seconds = coordinator.update_interval.total_seconds()
@@ -349,4 +355,5 @@ class TestEnphaseDataUpdateCoordinatorUnit:
                     # This is an async method, but we're testing the sync error handling
                     # In practice, this would be called with await
                     import asyncio
+
                     asyncio.run(coordinator._async_update_data())

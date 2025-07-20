@@ -26,7 +26,7 @@ class TestEnphaseProductionSwitchUnit:
     def test_switch_unique_id_generation(self):
         """Test switch unique ID generation with different entry IDs."""
         mock_coordinator = MagicMock()
-        
+
         test_entry_ids = [
             "short_id",
             "very_long_entry_id_with_many_characters",
@@ -87,8 +87,14 @@ class TestEnphaseProductionSwitchUnit:
             ({"production_enabled": True}, True),  # Enabled
             ({"production_enabled": False}, False),  # Disabled
             ({"other_key": "value"}, False),  # Missing production_enabled key
-            ({"production_enabled": True, "current_power": 5000}, True),  # With power data
-            ({"production_enabled": False, "current_power": 0}, False),  # Disabled with zero power
+            (
+                {"production_enabled": True, "current_power": 5000},
+                True,
+            ),  # With power data
+            (
+                {"production_enabled": False, "current_power": 0},
+                False,
+            ),  # Disabled with zero power
         ]
 
         for coordinator_data, expected_is_on in test_cases:
@@ -179,7 +185,7 @@ class TestEnphaseProductionSwitchUnit:
         mock_coordinator = MagicMock()
         mock_coordinator.client.set_production_power = AsyncMock()
         mock_coordinator.async_request_refresh = AsyncMock()
-        
+
         mock_entry = MagicMock()
         mock_entry.entry_id = "test_entry"
 
@@ -196,7 +202,7 @@ class TestEnphaseProductionSwitchUnit:
         mock_coordinator = MagicMock()
         mock_coordinator.client.set_production_power = AsyncMock()
         mock_coordinator.async_request_refresh = AsyncMock()
-        
+
         mock_entry = MagicMock()
         mock_entry.entry_id = "test_entry"
 
@@ -213,7 +219,7 @@ class TestEnphaseProductionSwitchUnit:
         mock_coordinator = MagicMock()
         mock_coordinator.client.set_production_power = AsyncMock()
         mock_coordinator.async_request_refresh = AsyncMock()
-        
+
         mock_entry = MagicMock()
         mock_entry.entry_id = "test_entry"
 
@@ -297,7 +303,7 @@ class TestEnphaseProductionSwitchUnit:
         mock_coordinator.async_request_refresh = AsyncMock(
             side_effect=Exception("Refresh failed")
         )
-        
+
         mock_entry = MagicMock()
         mock_entry.entry_id = "test_entry"
 
@@ -337,7 +343,7 @@ class TestEnphaseProductionSwitchUnit:
         assert hasattr(switch, "available")
         assert hasattr(switch, "device_info")
         assert hasattr(switch, "extra_state_attributes")
-        
+
         # Should have coordinator-related attributes
         assert hasattr(switch, "coordinator")
         assert switch.coordinator == mock_coordinator
