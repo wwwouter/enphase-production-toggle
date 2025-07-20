@@ -41,6 +41,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
         _LOGGER.error(
             "Failed to authenticate with Enphase Envoy at %s: %s", data[CONF_HOST], err
         )
+        _LOGGER.error("Error type: %s", type(err).__name__)
         _LOGGER.exception("Authentication error details")
         raise CannotConnect from err
     finally:

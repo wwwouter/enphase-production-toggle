@@ -5,7 +5,13 @@
       "Bash(mkdir:*)",
       "Bash(uv:*)",
       "Bash(rm:*)",
-      "Bash(python3.13:*)"
+      "Bash(python3.13:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:community.home-assistant.io)",
+      "WebFetch(domain:evilzenscientist.com)",
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

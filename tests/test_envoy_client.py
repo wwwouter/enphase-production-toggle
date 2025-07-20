@@ -37,11 +37,21 @@ async def test_authenticate_failure():
 
     with patch("aiohttp.ClientSession") as mock_session_class:
         mock_session = mock_session_class.return_value
-        mock_response = MagicMock()
-        mock_response.status = 401
-        mock_response.__aenter__ = AsyncMock(return_value=mock_response)
-        mock_response.__aexit__ = AsyncMock(return_value=None)
-        mock_session.post.return_value = mock_response
+        
+        # Mock serial number fetch first (success)
+        serial_response = MagicMock()
+        serial_response.status = 200
+        serial_response.text = AsyncMock(return_value='<?xml version="1.0"?><envoy_info><device><sn>123456789012</sn></device></envoy_info>')
+        serial_response.__aenter__ = AsyncMock(return_value=serial_response)
+        serial_response.__aexit__ = AsyncMock(return_value=None)
+        mock_session.get.return_value = serial_response
+        
+        # Mock OAuth failure
+        oauth_response = MagicMock()
+        oauth_response.status = 401
+        oauth_response.__aenter__ = AsyncMock(return_value=oauth_response)
+        oauth_response.__aexit__ = AsyncMock(return_value=None)
+        mock_session.post.return_value = oauth_response
 
         with pytest.raises(Exception, match="Authentication failed: 401"):
             await client.authenticate()
@@ -99,7 +109,7 @@ async def test_set_production_power_enable(mock_aiohttp_session):
         mock_aiohttp_session.put.assert_called_once()
         call_args = mock_aiohttp_session.put.call_args
         assert "ivp/mod/603980032/mode/power" in call_args[0][0]
-        assert call_args[1]["json"]["arr"] == [False]  # False = production on
+        assert call_args[1]["json"]["arr"] == [0]  # 0 = production on
 
 
 @pytest.mark.asyncio
@@ -115,7 +125,7 @@ async def test_set_production_power_disable(mock_aiohttp_session):
         # Verify PUT request was made with correct data
         mock_aiohttp_session.put.assert_called_once()
         call_args = mock_aiohttp_session.put.call_args
-        assert call_args[1]["json"]["arr"] == [True]  # True = production off
+        assert call_args[1]["json"]["arr"] == [1]  # 1 = production off
 
 
 @pytest.mark.asyncio

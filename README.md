@@ -19,9 +19,11 @@ A minimal Home Assistant custom integration for toggling Enphase solar productio
 
 During setup, you'll need to provide:
 
-- **Envoy IP Address**: The local IP address of your Enphase Envoy
-- **Enphase Account Username**: Your Enphase account email
+- **Envoy IP Address**: The local IP address of your Enphase Envoy (e.g., `192.168.1.100`)
+- **Enphase Account Username**: Your Enphase installer account email (e.g., `installer@example.com`)
 - **Enphase Account Password**: Your Enphase account password
+
+**Important**: You need an Enphase installer account to control production. Regular homeowner accounts may only have read access to production data.
 
 ## Usage
 
@@ -59,6 +61,24 @@ uv run pytest --cov=custom_components.enphase_production_toggle
 
 # Run specific test file
 uv run pytest tests/test_switch.py
+```
+
+### Testing with Debug Scripts
+
+The repository includes several debug scripts for testing the integration outside of Home Assistant. Before using them:
+
+1. Update the credentials in each script:
+   - Replace `192.168.1.xxx` with your Envoy IP address
+   - Replace `your-email@example.com` with your Enphase installer account email
+   - Set your password via environment variable: `export ENPHASE_PASSWORD="your_password"`
+
+2. Run debug scripts:
+```bash
+# Test authentication only
+uv run debug_connection.py
+
+# Test production control endpoints
+uv run test_production_control.py
 ```
 
 ### Code Quality
