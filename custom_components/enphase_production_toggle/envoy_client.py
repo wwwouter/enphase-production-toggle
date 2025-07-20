@@ -159,7 +159,8 @@ class EnvoyClient:
                 _LOGGER.debug("Received production data: %s", data)
 
                 # Extract production status from response
-                production = data.get("production", [{}])[0]
+                production_array = data.get("production", [{}])
+                production = production_array[0] if production_array else {}
                 current_power = production.get("wNow", 0)
                 is_producing = current_power > 0
 
