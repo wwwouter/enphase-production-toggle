@@ -1,14 +1,15 @@
 """Simple integration tests that don't require full Home Assistant setup."""
 
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 
 from custom_components.enphase_production_toggle.const import (
-    DOMAIN,
     CONF_HOST,
-    CONF_USERNAME,
     CONF_PASSWORD,
+    CONF_USERNAME,
     DEFAULT_NAME,
+    DOMAIN,
 )
 
 
@@ -58,9 +59,6 @@ async def test_switch_entity_creation():
     """Test switch entity can be created."""
     from custom_components.enphase_production_toggle.switch import (
         EnphaseProductionSwitch,
-    )
-    from custom_components.enphase_production_toggle.coordinator import (
-        EnphaseDataUpdateCoordinator,
     )
 
     # Mock coordinator

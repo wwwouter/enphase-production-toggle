@@ -3,8 +3,8 @@
 from datetime import timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
 from homeassistant.helpers.update_coordinator import UpdateFailed
+import pytest
 
 from custom_components.enphase_production_toggle.const import (
     CONF_HOST,
@@ -68,7 +68,7 @@ class TestEnphaseDataUpdateCoordinatorUnit:
             with patch(
                 "custom_components.enphase_production_toggle.coordinator.EnvoyClient"
             ) as mock_client_class:
-                coordinator = EnphaseDataUpdateCoordinator(mock_hass, mock_entry)
+                EnphaseDataUpdateCoordinator(mock_hass, mock_entry)
 
                 # Verify correct host was passed
                 mock_client_class.assert_called_once_with(
@@ -88,7 +88,7 @@ class TestEnphaseDataUpdateCoordinatorUnit:
         with patch(
             "custom_components.enphase_production_toggle.coordinator.EnvoyClient"
         ) as mock_client_class:
-            coordinator = EnphaseDataUpdateCoordinator(mock_hass, mock_entry)
+            EnphaseDataUpdateCoordinator(mock_hass, mock_entry)
 
             # Verify special characters are preserved
             mock_client_class.assert_called_once_with(

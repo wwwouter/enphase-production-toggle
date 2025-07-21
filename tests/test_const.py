@@ -1,7 +1,5 @@
 """Test constants and configuration values."""
 
-import pytest
-
 from custom_components.enphase_production_toggle.const import (
     CONF_HOST,
     CONF_PASSWORD,

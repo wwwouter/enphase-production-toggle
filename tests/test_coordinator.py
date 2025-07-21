@@ -1,16 +1,16 @@
 """Test the Enphase Production Toggle coordinator."""
 
-import pytest
-from unittest.mock import AsyncMock, patch
 from datetime import timedelta
+from unittest.mock import AsyncMock, patch
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import UpdateFailed
+import pytest
 
+from custom_components.enphase_production_toggle.const import DEFAULT_SCAN_INTERVAL
 from custom_components.enphase_production_toggle.coordinator import (
     EnphaseDataUpdateCoordinator,
 )
-from custom_components.enphase_production_toggle.const import DEFAULT_SCAN_INTERVAL
 
 
 async def test_coordinator_init(hass: HomeAssistant, mock_config_entry):

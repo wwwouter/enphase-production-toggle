@@ -1,18 +1,18 @@
 """Test the Enphase Production Toggle config flow."""
 
-import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import patch
 
-from homeassistant import config_entries, data_entry_flow
+from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
+import pytest
 
-from custom_components.enphase_production_toggle.const import (
-    DOMAIN,
-    CONF_HOST,
-    CONF_USERNAME,
-    CONF_PASSWORD,
-)
 from custom_components.enphase_production_toggle.config_flow import CannotConnect
+from custom_components.enphase_production_toggle.const import (
+    CONF_HOST,
+    CONF_PASSWORD,
+    CONF_USERNAME,
+    DOMAIN,
+)
 
 
 async def test_form(hass: HomeAssistant, mock_envoy_client) -> None:

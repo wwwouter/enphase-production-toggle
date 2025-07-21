@@ -1,7 +1,8 @@
 """Test the Enphase Envoy client."""
 
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 
 from custom_components.enphase_production_toggle.envoy_client import EnvoyClient
 
@@ -37,15 +38,17 @@ async def test_authenticate_failure():
 
     with patch("aiohttp.ClientSession") as mock_session_class:
         mock_session = mock_session_class.return_value
-        
+
         # Mock serial number fetch first (success)
         serial_response = MagicMock()
         serial_response.status = 200
-        serial_response.text = AsyncMock(return_value='<?xml version="1.0"?><envoy_info><device><sn>123456789012</sn></device></envoy_info>')
+        serial_response.text = AsyncMock(
+            return_value='<?xml version="1.0"?><envoy_info><device><sn>123456789012</sn></device></envoy_info>'
+        )
         serial_response.__aenter__ = AsyncMock(return_value=serial_response)
         serial_response.__aexit__ = AsyncMock(return_value=None)
         mock_session.get.return_value = serial_response
-        
+
         # Mock OAuth failure
         oauth_response = MagicMock()
         oauth_response.status = 401

@@ -1,15 +1,16 @@
 """Test error handling and edge cases across the integration."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
-from homeassistant.helpers.update_coordinator import UpdateFailed
 
-from custom_components.enphase_production_toggle.envoy_client import EnvoyClient
+from homeassistant.helpers.update_coordinator import UpdateFailed
+import pytest
+
+from custom_components.enphase_production_toggle.config_flow import CannotConnect
 from custom_components.enphase_production_toggle.coordinator import (
     EnphaseDataUpdateCoordinator,
 )
+from custom_components.enphase_production_toggle.envoy_client import EnvoyClient
 from custom_components.enphase_production_toggle.switch import EnphaseProductionSwitch
-from custom_components.enphase_production_toggle.config_flow import CannotConnect
 
 
 class TestErrorHandling:
@@ -241,7 +242,7 @@ class TestErrorHandling:
                 assert "current_power" in result
                 assert "production_enabled" in result
                 assert isinstance(result["is_producing"], bool)
-                assert isinstance(result["current_power"], (int, float))
+                assert isinstance(result["current_power"], int | float)
                 assert isinstance(result["production_enabled"], bool)
 
     def test_switch_state_with_coordinator_errors(self):
@@ -297,7 +298,7 @@ class TestErrorHandling:
                 if isinstance(result, Exception):
                     # If one fails, check it's a reasonable failure
                     assert isinstance(
-                        result, (ConnectionError, TimeoutError, Exception)
+                        result, ConnectionError | TimeoutError | Exception
                     )
                 else:
                     # If one succeeds, it should be valid data
@@ -313,8 +314,8 @@ class TestErrorHandling:
 
         edge_case_data = [
             {"current_power": -1, "is_producing": True},  # Negative power
-            {"current_power": float('inf'), "is_producing": True},  # Infinite power
-            {"current_power": float('nan'), "is_producing": True},  # NaN power
+            {"current_power": float("inf"), "is_producing": True},  # Infinite power
+            {"current_power": float("nan"), "is_producing": True},  # NaN power
             {"current_power": "5000", "is_producing": "true"},  # String values
             {"current_power": None, "is_producing": None},  # None values
             {"current_power": [], "is_producing": {}},  # Wrong types
@@ -331,7 +332,7 @@ class TestErrorHandling:
 
                 # Basic type checking - but first check if available is actually a bool
                 # since MagicMock objects can cause issues
-                if hasattr(available, '_mock_name'):
+                if hasattr(available, "_mock_name"):
                     # This is a mock object, skip type assertion
                     pass
                 else:
@@ -342,6 +343,6 @@ class TestErrorHandling:
                 # If it does raise an exception, it should be a reasonable one
                 # But exclude AssertionError which might be from our own checks
                 assert (
-                    isinstance(e, (TypeError, ValueError, AttributeError))
+                    isinstance(e, TypeError | ValueError | AttributeError)
                     or "mock" in str(e).lower()
                 )

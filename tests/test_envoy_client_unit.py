@@ -1,11 +1,7 @@
 """Unit tests for EnvoyClient without external dependencies."""
 
 import hashlib
-import re
 import secrets
-from unittest.mock import MagicMock, patch
-
-import pytest
 
 from custom_components.enphase_production_toggle.envoy_client import EnvoyClient
 
@@ -83,9 +79,9 @@ class TestEnvoyClientUnit:
         test_cases = [
             '{"other":"data"}',
             '{"sessionid":"wrong_key"}',
-            '{}',
-            '',
-            'plain text without json',
+            "{}",
+            "",
+            "plain text without json",
             '{"session_id": }',  # Invalid JSON
             '{"session_id":""}',  # Empty session ID
         ]
@@ -156,7 +152,7 @@ class TestEnvoyClientUnit:
         ]
 
         for host in test_hosts:
-            client = EnvoyClient(host, "user", "pass")
+            EnvoyClient(host, "user", "pass")
 
             # Test production.json URL
             expected_production_url = f"http://{host}/production.json"
@@ -177,7 +173,7 @@ class TestEnvoyClientUnit:
 
     def test_production_data_parsing_edge_cases(self):
         """Test production data parsing with various data structures."""
-        client = EnvoyClient("host", "user", "pass")
+        EnvoyClient("host", "user", "pass")
 
         # These would be tested in integration tests, but we can test the logic
         test_data_sets = [
@@ -211,7 +207,7 @@ class TestEnvoyClientUnit:
 
             # Verify the structure is always consistent
             assert isinstance(result["is_producing"], bool)
-            assert isinstance(result["current_power"], (int, float))
+            assert isinstance(result["current_power"], int | float)
             assert isinstance(result["production_enabled"], bool)
             assert result["current_power"] >= 0
 
@@ -239,8 +235,8 @@ class TestEnvoyClientUnit:
 
         # Test with potentially dangerous inputs
         dangerous_inputs = [
-            '"session_id":"' + 'a' * 10000 + '"',  # Very long session ID
-            '"session_id":"' + 'a' * 1000000,  # Unterminated very long string
+            '"session_id":"' + "a" * 10000 + '"',  # Very long session ID
+            '"session_id":"' + "a" * 1000000,  # Unterminated very long string
             '"session_id":"test"' * 1000,  # Repeated pattern
         ]
 

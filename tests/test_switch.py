@@ -1,11 +1,9 @@
 """Test the Enphase Production Toggle switch."""
 
-import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_component import EntityComponent
-from homeassistant.const import STATE_ON, STATE_OFF
+import pytest
 
 from custom_components.enphase_production_toggle.const import DOMAIN
 from custom_components.enphase_production_toggle.switch import EnphaseProductionSwitch

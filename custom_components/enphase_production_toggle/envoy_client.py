@@ -17,7 +17,9 @@ _LOGGER = logging.getLogger(__name__)
 class EnvoyClient:
     """Client for communicating with Enphase Envoy."""
 
-    def __init__(self, host: str, username: str, password: str, serial_number: str = None) -> None:
+    def __init__(
+        self, host: str, username: str, password: str, serial_number: str = None
+    ) -> None:
         """Initialize the client."""
         _LOGGER.debug(
             "Initializing EnvoyClient for host: %s, username: %s", host, username
@@ -72,7 +74,7 @@ class EnvoyClient:
                 "serialNum": self.serial_number or "",
                 "granttype": "authorize",
                 "state": "",
-                "invalidSerialNum": ""
+                "invalidSerialNum": "",
             }
             _LOGGER.debug("Authenticating with Enphase cloud service at %s", auth_url)
             _LOGGER.debug("Redirect URI: %s", redirect_uri)
@@ -87,21 +89,24 @@ class EnvoyClient:
 
                 # Expect a 302 redirect with authorization code
                 if response.status == 302:
-                    location = response.headers.get('Location', '')
+                    location = response.headers.get("Location", "")
                     _LOGGER.debug("Redirect location: %s", location)
 
                     # Extract authorization code from redirect URL
                     from urllib.parse import parse_qs, urlparse
+
                     parsed_url = urlparse(location)
                     query_params = parse_qs(parsed_url.query)
 
-                    if 'code' in query_params:
-                        auth_code = query_params['code'][0]
+                    if "code" in query_params:
+                        auth_code = query_params["code"][0]
                         _LOGGER.info("Successfully extracted authorization code")
                         _LOGGER.debug("Authorization code: %s...", auth_code[:8])
 
                         # Step 2: Get JWT token from local Envoy using auth code
-                        await self._get_jwt_token(code_verifier, auth_code, redirect_uri)
+                        await self._get_jwt_token(
+                            code_verifier, auth_code, redirect_uri
+                        )
                         return
                     else:
                         _LOGGER.error("No authorization code found in redirect URL")
@@ -126,7 +131,9 @@ class EnvoyClient:
                     print(f"Response text (first 500 chars):\n{response_text[:500]}")
                     print("=== END DEBUG ===\n")
 
-                _LOGGER.warning("Expected redirect but got %d response", response.status)
+                _LOGGER.warning(
+                    "Expected redirect but got %d response", response.status
+                )
                 raise Exception(f"Unexpected response: {response.status}")
 
         except aiohttp.ClientConnectorError as err:
@@ -155,7 +162,9 @@ class EnvoyClient:
             _LOGGER.debug("No session ID pattern found in response")
             return None
 
-    async def _get_jwt_token(self, code_verifier: str, auth_code: str, redirect_uri: str) -> None:
+    async def _get_jwt_token(
+        self, code_verifier: str, auth_code: str, redirect_uri: str
+    ) -> None:
         """Get JWT token from Entrez cloud service and validate with Envoy."""
         # Step 1: Exchange authorization code for JWT token via Entrez
         entrez_url = "https://entrez.enphaseenergy.com/oauth/token"
@@ -173,7 +182,7 @@ class EnvoyClient:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             "Accept": "application/json",
-            "User-Agent": "Home Assistant Enphase Integration"
+            "User-Agent": "Home Assistant Enphase Integration",
         }
 
         _LOGGER.debug("JWT request prepared with authorization code")
@@ -184,8 +193,12 @@ class EnvoyClient:
             return
 
         # Step 1: Get JWT token from Entrez cloud service
-        timeout = aiohttp.ClientTimeout(total=300)  # 5 minute timeout like working implementations
-        async with self._session.post(entrez_url, data=jwt_data, headers=headers, ssl=True, timeout=timeout) as response:
+        timeout = aiohttp.ClientTimeout(
+            total=300
+        )  # 5 minute timeout like working implementations
+        async with self._session.post(
+            entrez_url, data=jwt_data, headers=headers, ssl=True, timeout=timeout
+        ) as response:
             _LOGGER.debug("Entrez token response status: %d", response.status)
             if response.status == 200:
                 try:
@@ -228,7 +241,9 @@ class EnvoyClient:
                 elif response.status == 404:
                     _LOGGER.error("Endpoint not found - check URL path")
 
-                raise Exception(f"JWT token exchange failed: {response.status} - {response_text[:100]}")
+                raise Exception(
+                    f"JWT token exchange failed: {response.status} - {response_text[:100]}"
+                )
 
     async def _validate_jwt_token(self, token: str) -> None:
         """Validate JWT token with Envoy's /auth/check_jwt endpoint."""
@@ -238,28 +253,39 @@ class EnvoyClient:
         # Headers based on working implementations
         headers = {
             "Authorization": f"Bearer {token}",
-            "Accept": "*/*"
+            "Accept": "*/*",
             # Note: User-Agent is intentionally omitted as per working implementations
         }
 
         timeout = aiohttp.ClientTimeout(total=30)
         try:
-            async with self._session.post(validation_url, headers=headers, ssl=False, timeout=timeout) as response:
+            async with self._session.post(
+                validation_url, headers=headers, ssl=False, timeout=timeout
+            ) as response:
                 _LOGGER.debug("JWT validation response status: %d", response.status)
                 if response.status == 200:
                     response_text = await response.text()
                     _LOGGER.debug("JWT validation response: %s", response_text[:100])
 
                     # Check for the expected validation response
-                    if "Valid token" in response_text or "<!DOCTYPE html>" in response_text:
+                    if (
+                        "Valid token" in response_text
+                        or "<!DOCTYPE html>" in response_text
+                    ):
                         self.jwt_token = token
                         _LOGGER.info("JWT token validated successfully with Envoy")
                         return
                     else:
-                        _LOGGER.warning("Unexpected validation response: %s", response_text[:200])
+                        _LOGGER.warning(
+                            "Unexpected validation response: %s", response_text[:200]
+                        )
                 else:
                     response_text = await response.text()
-                    _LOGGER.error("JWT token validation failed: %d - %s", response.status, response_text[:200])
+                    _LOGGER.error(
+                        "JWT token validation failed: %d - %s",
+                        response.status,
+                        response_text[:200],
+                    )
                     raise Exception(f"JWT token validation failed: {response.status}")
         except Exception as e:
             _LOGGER.error("Error during JWT token validation: %s", e)
@@ -279,7 +305,9 @@ class EnvoyClient:
             headers["Authorization"] = f"Bearer {self.jwt_token}"
             # Some Envoy versions might need this cookie format
             headers["Cookie"] = f"sessionId={self.jwt_token}"
-            _LOGGER.debug("Using JWT token for authentication with both Bearer and Cookie headers")
+            _LOGGER.debug(
+                "Using JWT token for authentication with both Bearer and Cookie headers"
+            )
 
         if self._session is None:
             _LOGGER.error("Session not initialized for production status request")
@@ -343,10 +371,7 @@ class EnvoyClient:
 
         # Data format exactly matching HACS integration
         power_forced_off = 0 if enabled else 1  # 0 = on, 1 = off (opposite of enabled)
-        data = {
-            "length": 1,
-            "arr": [power_forced_off]
-        }
+        data = {"length": 1, "arr": [power_forced_off]}
 
         _LOGGER.debug("Making production control request to %s", url)
         _LOGGER.debug("Request data: %s", data)
@@ -356,7 +381,9 @@ class EnvoyClient:
             _LOGGER.error("Session not initialized for production control request")
             raise Exception("Session not initialized")
 
-        async with self._session.put(url, headers=headers, json=data, ssl=False) as response:
+        async with self._session.put(
+            url, headers=headers, json=data, ssl=False
+        ) as response:
             _LOGGER.debug("Production control response status: %d", response.status)
             if response.status not in [200, 201, 204]:
                 _LOGGER.error(
@@ -390,7 +417,7 @@ class EnvoyClient:
     def _generate_code_verifier(self, length: int = 40) -> str:
         """Generate a random code verifier for OAuth PKCE."""
         characters = string.ascii_letters + string.digits
-        return ''.join(secrets.choice(characters) for _ in range(length))
+        return "".join(secrets.choice(characters) for _ in range(length))
 
     def _generate_challenge(self, code_verifier: str) -> str:
         """Generate code challenge from verifier using SHA256 and base64url encoding."""
@@ -421,7 +448,8 @@ class EnvoyClient:
                     text = await response.text()
                     # Extract serial number from XML
                     import re
-                    match = re.search(r'<sn>(\d+)</sn>', text)
+
+                    match = re.search(r"<sn>(\d+)</sn>", text)
                     if match:
                         serial = match.group(1)
                         _LOGGER.debug("Found serial number: %s", serial)

@@ -1,10 +1,10 @@
 """Test the Enphase Production Toggle integration initialization."""
 
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from homeassistant.core import HomeAssistant
 from homeassistant.const import Platform
+from homeassistant.core import HomeAssistant
+import pytest
 
 from custom_components.enphase_production_toggle import (
     async_setup_entry,

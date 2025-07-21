@@ -77,7 +77,7 @@ automation:
       - service: switch.turn_off
         target:
           entity_id: switch.enphase_production
-  
+
   - alias: "Enable solar after peak hours"
     trigger:
       - platform: time
@@ -120,7 +120,7 @@ logger:
 #### Logging Levels
 
 - **INFO**: Key operations (setup, authentication success, production changes)
-- **DEBUG**: Detailed flow (API calls, data parsing, state updates)  
+- **DEBUG**: Detailed flow (API calls, data parsing, state updates)
 - **ERROR**: Failures (authentication errors, API failures, connection issues)
 
 Then restart Home Assistant and check the logs for detailed error information. The logs will show exactly where in the process any issues occur, making troubleshooting much easier.

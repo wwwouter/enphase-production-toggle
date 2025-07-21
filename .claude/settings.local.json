@@ -11,7 +11,9 @@
       "WebFetch(domain:community.home-assistant.io)",
       "WebFetch(domain:evilzenscientist.com)",
       "Bash(python -m pytest tests/ -v)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
