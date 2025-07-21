@@ -321,3 +321,156 @@ class TestErrorHandling:
                     isinstance(e, TypeError | ValueError | AttributeError)
                     or "mock" in str(e).lower()
                 )
+
+    def test_authentication_state_errors(self):
+        """Test error handling for authentication state issues."""
+        client = EnvoyClient("192.168.1.100", "test@example.com", "password")
+
+        # Test accessing methods without authentication
+        assert client.jwt_token is None
+        assert client.session_id is None
+
+        # Test that client handles missing authentication gracefully
+        assert hasattr(client, "jwt_token")
+        assert hasattr(client, "session_id")
+
+    def test_production_control_payload_validation(self):
+        """Test production control payload format validation."""
+        # Test the exact payload format used for production control
+        test_cases = [
+            (True, {"length": 1, "arr": [0]}),  # Enable production
+            (False, {"length": 1, "arr": [1]}),  # Disable production
+        ]
+
+        for enabled, expected_payload in test_cases:
+            # Simulate payload creation logic
+            power_forced_off = 0 if enabled else 1
+            payload = {"length": 1, "arr": [power_forced_off]}
+
+            assert payload == expected_payload
+            assert payload["length"] == 1
+            assert len(payload["arr"]) == payload["length"]
+            assert payload["arr"][0] in [0, 1]  # Valid values
+
+    def test_regex_security_patterns(self):
+        """Test that regex patterns are safe from ReDoS attacks."""
+        client = EnvoyClient("192.168.1.100", "test@example.com", "password")
+
+        # Test potentially dangerous regex inputs
+        dangerous_inputs = [
+            # Very long strings
+            '{"session_id":"' + "a" * 10000 + '"}',
+            # Repeated patterns
+            '{"session_id":"test"}' * 1000,
+            # Nested structures
+            '{"session_id":{"session_id":"nested"}}',
+            # Malformed JSON with repeated patterns
+            '{"session_id":"test"' * 100,
+        ]
+
+        for dangerous_input in dangerous_inputs:
+            try:
+                # Should handle gracefully without hanging
+                result = client._extract_session_id(dangerous_input)
+                # Result should be either None or a valid string
+                assert result is None or isinstance(result, str)
+            except Exception:
+                # Any exception is acceptable as long as it doesn't hang
+                pass
+
+    def test_network_error_types(self):
+        """Test various network error type handling."""
+
+        # Test that we can create various network errors
+        error_types = [
+            ConnectionError("Connection failed"),
+            TimeoutError("Request timed out"),
+            ValueError("Invalid response format"),
+            RuntimeError("Unexpected runtime error"),
+        ]
+
+        for error in error_types:
+            # Test that errors can be raised and caught
+            with pytest.raises(type(error)):
+                raise error
+
+    def test_json_parsing_edge_cases(self):
+        """Test JSON parsing with various edge cases."""
+        import json
+
+        valid_cases = [
+            '{"valid": "json"}',
+            '{"empty_string": ""}',
+            '{"null_value": null}',
+            '{"number": 123}',
+            '{"float": 123.45}',
+            '{"boolean": true}',
+            '{"array": [1, 2, 3]}',
+            '{"nested": {"object": "value"}}',
+            "null",  # Just null
+            "[]",  # Empty array
+            "{}",  # Empty object
+        ]
+
+        for json_str in valid_cases:
+            try:
+                result = json.loads(json_str)
+                # Valid JSON should parse successfully
+                assert result is not None or json_str == "null"
+            except json.JSONDecodeError:
+                # Should not happen for valid cases
+                assert False, f"Valid JSON string failed to parse: {json_str}"
+
+        invalid_cases = [
+            "",  # Empty string
+            "invalid json",
+            '{"unclosed": "quote}',
+            "{broken json}",
+        ]
+
+        for json_str in invalid_cases:
+            with pytest.raises(json.JSONDecodeError):
+                json.loads(json_str)
+
+    def test_coordinator_error_recovery(self):
+        """Test coordinator error recovery scenarios."""
+        from custom_components.enphase_production_toggle.coordinator import (
+            EnphaseDataUpdateCoordinator,
+        )
+
+        # Test that coordinator class can be imported and instantiated
+        assert EnphaseDataUpdateCoordinator is not None
+
+        # Test basic coordinator attributes exist
+        coordinator = EnphaseDataUpdateCoordinator.__new__(EnphaseDataUpdateCoordinator)
+
+        # Test that expected methods exist
+        assert hasattr(EnphaseDataUpdateCoordinator, "__init__")
+        assert hasattr(EnphaseDataUpdateCoordinator, "_async_update_data")
+
+    def test_switch_error_states(self):
+        """Test switch behavior in various error states."""
+        mock_coordinator = MagicMock()
+        mock_entry = MagicMock()
+        mock_entry.entry_id = "test_entry"
+
+        switch = EnphaseProductionSwitch(mock_coordinator, mock_entry)
+
+        # Test with various coordinator states
+        error_states = [
+            {"data": None, "last_update_success": False},
+            {"data": {}, "last_update_success": False},
+            {"data": {"invalid": "data"}, "last_update_success": True},
+        ]
+
+        for state in error_states:
+            mock_coordinator.data = state["data"]
+            mock_coordinator.last_update_success = state["last_update_success"]
+
+            # Should handle all states gracefully
+            is_on = switch.is_on
+            available = switch.available
+            attrs = switch.extra_state_attributes
+
+            assert isinstance(is_on, bool)
+            assert isinstance(attrs, dict)

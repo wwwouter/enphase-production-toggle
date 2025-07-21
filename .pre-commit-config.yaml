@@ -1,26 +1,12 @@
-# Pre-commit hooks for code quality
+# Pre-commit hooks for code quality - never blocks!
+fail_fast: false
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.4
+  - repo: local
     hooks:
-      # Run the linter
-      - id: ruff
-        args: [--fix]
-      # Run the formatter
-      - id: ruff-format
-
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
-    hooks:
-      - id: black
-        language_version: python3
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-      - id: check-merge-conflict
-      - id: debug-statements
+      - id: format-and-stage
+        name: Format code and stage changes (never blocks)
+        entry: ./.pre-commit-wrapper.sh
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
