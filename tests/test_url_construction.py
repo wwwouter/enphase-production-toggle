@@ -8,7 +8,7 @@ def test_production_status_url_construction():
     test_hosts = ["192.168.1.100", "10.0.0.5", "envoy.local", "my-envoy.home.local"]
 
     for host in test_hosts:
-        client = EnvoyClient(host, "user", "pass")
+        _ = EnvoyClient(host, "user", "pass")  # Verify client can be created
         expected_url = f"https://{host}/production.json"
 
         # Test URL construction logic (since we can't easily test the actual request)
@@ -22,7 +22,7 @@ def test_auth_urls_construction():
     test_hosts = ["192.168.1.100", "envoy.local"]
 
     for host in test_hosts:
-        client = EnvoyClient(host, "user", "pass")
+        _ = EnvoyClient(host, "user", "pass")  # Verify client can be created
 
         # Test JWT validation URL
         jwt_url = f"https://{host}/auth/check_jwt"
@@ -42,7 +42,7 @@ def test_production_control_url_construction():
     test_hosts = ["192.168.1.100", "envoy.local"]
 
     for host in test_hosts:
-        client = EnvoyClient(host, "user", "pass")
+        _ = EnvoyClient(host, "user", "pass")  # Verify client can be created
 
         # Test production control URL (using EMU device ID)
         control_url = f"https://{host}/ivp/mod/603980032/mode/power"
@@ -56,7 +56,7 @@ def test_info_xml_url_construction():
     test_hosts = ["192.168.1.100", "envoy.local"]
 
     for host in test_hosts:
-        client = EnvoyClient(host, "user", "pass")
+        _ = EnvoyClient(host, "user", "pass")  # Verify client can be created
 
         # Test info.xml URL (note: uses HTTP not HTTPS)
         info_url = f"http://{host}/info.xml"

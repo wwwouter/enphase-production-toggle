@@ -61,9 +61,3 @@ def test_constants_immutable():
     assert DEFAULT_NAME == original_default_name
     assert DEFAULT_SCAN_INTERVAL == original_scan_interval
     assert domain_copy != DOMAIN
-
-
-# Test comment
-# Another test comment
-# Test formatting issue
-unused_var = 123

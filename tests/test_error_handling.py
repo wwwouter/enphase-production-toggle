@@ -419,7 +419,7 @@ class TestErrorHandling:
                 assert result is not None or json_str == "null"
             except json.JSONDecodeError:
                 # Should not happen for valid cases
-                assert False, f"Valid JSON string failed to parse: {json_str}"
+                raise AssertionError(f"Valid JSON string failed to parse: {json_str}")
 
         invalid_cases = [
             "",  # Empty string
@@ -442,7 +442,7 @@ class TestErrorHandling:
         assert EnphaseDataUpdateCoordinator is not None
 
         # Test basic coordinator attributes exist
-        coordinator = EnphaseDataUpdateCoordinator.__new__(EnphaseDataUpdateCoordinator)
+        _ = EnphaseDataUpdateCoordinator.__new__(EnphaseDataUpdateCoordinator)
 
         # Test that expected methods exist
         assert hasattr(EnphaseDataUpdateCoordinator, "__init__")
@@ -469,7 +469,7 @@ class TestErrorHandling:
 
             # Should handle all states gracefully
             is_on = switch.is_on
-            available = switch.available
+            _ = switch.available  # Check that it doesn't crash
             attrs = switch.extra_state_attributes
 
             assert isinstance(is_on, bool)
