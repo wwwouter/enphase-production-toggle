@@ -66,3 +66,4 @@ def test_constants_immutable():
 # Test comment
 # Another test comment
 # Test formatting issue
+unused_var = 123
