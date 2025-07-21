@@ -13,6 +13,12 @@ from custom_components.enphase_production_toggle.const import (
 )
 
 
+@pytest.fixture(autouse=True)
+async def auto_enable_custom_integrations(enable_custom_integrations):
+    """Enable custom integrations in tests."""
+    yield
+
+
 @pytest.fixture
 def mock_config_entry():
     """Mock config entry."""
@@ -28,6 +34,10 @@ def mock_config_entry():
         },
         source="user",
         entry_id="test_entry_id",
+        discovery_keys={},
+        options={},
+        subentries_data={},
+        unique_id="192.168.1.100",
     )
 
 
