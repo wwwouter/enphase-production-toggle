@@ -18,7 +18,7 @@ class EnvoyClient:
     """Client for communicating with Enphase Envoy."""
 
     def __init__(
-        self, host: str, username: str, password: str, serial_number: str = None
+        self, host: str, username: str, password: str, serial_number: str | None = None
     ) -> None:
         """Initialize the client."""
         _LOGGER.debug(
