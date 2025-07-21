@@ -83,6 +83,22 @@ uv run test_production_control.py
 
 ### Code Quality
 
+#### Pre-commit Hooks (Recommended)
+
+Set up pre-commit hooks to automatically format and lint code before commits:
+
+```bash
+# Install pre-commit hooks (one-time setup)
+uv run pre-commit install
+
+# Run hooks on all files (optional)
+uv run pre-commit run --all-files
+```
+
+After setup, ruff and black will automatically run on staged files before each commit.
+
+#### Manual Code Quality Commands
+
 ```bash
 # Format code with black
 uv run black custom_components/ tests/
@@ -90,8 +106,8 @@ uv run black custom_components/ tests/
 # Format code with ruff
 uv run ruff format custom_components/
 
-# Lint code
-uv run ruff check custom_components/
+# Lint and fix code with ruff
+uv run ruff check custom_components/ --fix
 
 # Type checking
 uv run basedpyright
